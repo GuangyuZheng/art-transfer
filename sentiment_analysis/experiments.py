@@ -72,16 +72,10 @@ def rest_to_one_bi_lstm_no_transfer(domain, layer_num=1, try_times=5):
             for k in range(0, 15):
                 r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=128, validation_data=(validX, validY))
                 print("evaluation, round:", k, "  ", domain)
-                temPWA = sentiment_analysis_show_acc(model, testX, testY)
-                # if temPWA > maxAcc:
-                #     model.save_weights(model_path, overwrite=True)
-                #     maxAcc = temPWA
+                # temPWA = sentiment_analysis_show_acc(model, testX, testY)
                 if r.history['val_loss'][0] < minLoss:
                     model.save_weights(tmp_model_path, overwrite=True)
                     minLoss = r.history['val_loss'][0]
-                # if r.history['val_acc'][0] > maxAcc:
-                #     model.save_weights(model_path, overwrite=True)
-                #     maxAcc = r.history['val_acc'][0]
             model.load_weights(tmp_model_path)
             temPWA = sentiment_analysis_show_acc(model, testX, testY)
             if temPWA > maxAcc:
@@ -131,7 +125,7 @@ def bi_lstm_no_transfer(domain, experiment, layer_num=1, try_times=5):
                 r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=32,
                               validation_data=(validX, validY))
                 print("evaluation, round:", k, "  ", domain)
-                temPWA = sentiment_analysis_show_acc(model, test_input, testY)
+                # temPWA = sentiment_analysis_show_acc(model, test_input, testY)
                 if r.history['val_loss'][0] < minLoss:
                     model.save_weights(tmp_model_path, overwrite=True)
                     minLoss = r.history['val_loss'][0]

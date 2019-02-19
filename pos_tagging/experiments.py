@@ -74,10 +74,6 @@ def init_data(domain, labeling_rate, form='target'):
     else:
         target_settings = settings
         target_task = t
-    # np.save(os.path.join(os.getcwd(), 'tx.npy'), tx)
-    # np.save(os.path.join(os.getcwd(), 'ty.npy'), ty)
-    # np.save(os.path.join(os.getcwd(), 'twx.npy'), twx)
-    # np.save(os.path.join(os.getcwd(), 'tm.npy'), tm)
     return x, wx, y, y_one_hot, m, tx, twx, ty, ty_one_hot, tm
 
 
@@ -173,15 +169,15 @@ def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000
         maxAcc = 0
-        for k in range(0, 80):
+        for k in range(0, target_settings.epochs):
             r = model_merged.fit([wx, x], y_one_hot, verbose=1, epochs=1, batch_size=target_settings.batch_size)
             print("evaluation, round:", k, "  ", source_domain, 'to', target_domain)
             py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
             acc = target_task.evaluate(py, ty, tm)
-            print('acc:', acc, 'maxAcc:', maxAcc)
             if acc > maxAcc:
                 model_merged.save_weights(model_merged_path, overwrite=True)
                 maxAcc = acc
+            print('acc:', acc, 'maxAcc:', maxAcc)
     else:
         model_merged.load_weights(model_merged_path)
         py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
@@ -221,15 +217,15 @@ def bi_art_gru_transfer(source_domain, target_domain, labeling_rate):
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000
         maxAcc = 0
-        for k in range(0, 80):
+        for k in range(0, target_settings.epochs):
             r = model_merged.fit([wx, x], y_one_hot, verbose=1, epochs=1, batch_size=target_settings.batch_size)
             print("evaluation, round:", k, "  ", source_domain, 'to', target_domain)
             py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
             acc = target_task.evaluate(py, ty, tm)
-            print('acc:', acc, 'maxAcc:', maxAcc)
             if acc > maxAcc:
                 model_merged.save_weights(model_merged_path, overwrite=True)
                 maxAcc = acc
+            print('acc:', acc, 'maxAcc:', maxAcc)
     else:
         model_merged.load_weights(model_merged_path)
         py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)

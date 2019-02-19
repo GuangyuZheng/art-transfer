@@ -5,7 +5,7 @@ class Settings(object):
         self.hidden_state_size = 100
         self.context_size = 100
         self.dropout_rate = 0.5
-        self.epochs = 10
+        self.epochs = 15
         self.bias = False
         self.domains = ['books',
                         'dvd',

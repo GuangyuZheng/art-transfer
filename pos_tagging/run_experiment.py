@@ -32,7 +32,7 @@ if experiment in available_experiments:
             result = bi_gru_no_transfer(source_domain, labeling_rates)
         elif experiment == 'bi_art_lstm':
             result = bi_art_lstm_transfer(source_domain, target_domain, labeling_rates)
-        elif experiment == 'bi_art_gri':
+        elif experiment == 'bi_art_gru':
             result = bi_art_gru_transfer(source_domain, target_domain, labeling_rates)
         f.write(result+'\n')
         print(result)

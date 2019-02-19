@@ -4,7 +4,6 @@ from sentiment_analysis.models import *
 from sentiment_analysis.settings import Settings
 from utils import *
 import numpy as np
-import random
 
 settings = Settings()
 vec = np.load(os.path.join(os.getcwd(), 'dataset', 'AMAZON', 'vec.npy'))
@@ -69,7 +68,7 @@ def rest_to_one_bi_lstm_no_transfer(domain, layer_num=1, try_times=5):
             minLoss = 10000
             model.load_weights(blank_model_path)
             model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
-            for k in range(0, 15):
+            for k in range(0, settings.epochs):
                 r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=128, validation_data=(validX, validY))
                 print("evaluation, round:", k, "  ", domain)
                 # temPWA = sentiment_analysis_show_acc(model, testX, testY)
@@ -122,7 +121,7 @@ def bi_lstm_no_transfer(domain, experiment, layer_num=1, try_times=5):
             model.load_weights(blank_model_path)
             model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
             for k in range(0, settings.epochs):
-                r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=32,
+                r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=128,
                               validation_data=(validX, validY))
                 print("evaluation, round:", k, "  ", domain)
                 # temPWA = sentiment_analysis_show_acc(model, test_input, testY)
@@ -244,8 +243,8 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     valid_input = [validX]
     test_input = [testX]
 
-    batch_size = 32
-    epoch = 10
+    batch_size = 64
+    epoch = settings.epochs
     print('transfer type: ' + transfer_type)
     if transfer_type == 'rest_to_one_bi_art_lstm':
         model_merged = bidirectional_art_lstm_model(settings)

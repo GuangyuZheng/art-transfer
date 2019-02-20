@@ -6,7 +6,7 @@ class Settings(object):
         self.context_size = 300
         self.epochs = 10
         self.batch_size = 128
-        self.char_encoding = 'cnn'
+        self.char_encoding = 'rnn'
         self.bias = True
         self.use_char_embed = True
 

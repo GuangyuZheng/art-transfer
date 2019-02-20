@@ -121,7 +121,7 @@ def bi_lstm_no_transfer(domain, experiment, layer_num=1, try_times=5):
             model.load_weights(blank_model_path)
             model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
             for k in range(0, settings.epochs):
-                r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=128,
+                r = model.fit(trainX, trainY, verbose=1, epochs=1, batch_size=64,
                               validation_data=(validX, validY))
                 print("evaluation, round:", k, "  ", domain)
                 # temPWA = sentiment_analysis_show_acc(model, test_input, testY)

@@ -19,7 +19,6 @@ def bi_lstm_no_transfer_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
-    sen_embed = Dropout(0.5, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:
@@ -49,7 +48,6 @@ def bi_gru_no_transfer_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
-    sen_embed = Dropout(0.5, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:
@@ -79,7 +77,6 @@ def bi_art_lstm_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, input_length=seq_len, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
-    sen_embed = Dropout(0.5, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:
@@ -111,7 +108,6 @@ def bi_art_gru_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, input_length=seq_len, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
-    sen_embed = Dropout(0.5, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:

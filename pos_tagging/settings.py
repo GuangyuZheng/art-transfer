@@ -6,7 +6,7 @@ class Settings(object):
         self.context_size = 300
         self.epochs = 10
         self.batch_size = 128
-        self.char_encoding = 'cnn'
+        self.char_encoding = 'rnn'
         self.bias = True
         self.use_char_embed = True
 
@@ -29,6 +29,7 @@ class PTBSettings(Settings):
         self.seq_len = 251
         self.max_char_len = 17
         self.epochs = 40
+        self.batch_size = 256
         self.label_index = ['PRP$', 'VBG', 'VBD', '``', 'VBN', 'POS', "''", 'VBP', 'WDT', 'JJ',
                             'WP', 'VBZ', 'DT', '#', 'RP', '$', 'NN', 'FW', ',', '.', 'TO', 'PRP', 'RB', '-LRB-',
                             ':', 'NNS', 'NNP', 'VB', 'WRB', 'CC', 'LS', 'PDT', 'RBS', 'RBR', 'CD', 'EX', 'IN', 'WP$',

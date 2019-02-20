@@ -1,9 +1,9 @@
 class Settings(object):
     def __init__(self):
         self.seq_len = 250
-        self.w_emb_size = 200
-        self.hidden_state_size = 100
-        self.context_size = 100
+        self.w_emb_size = 300
+        self.hidden_state_size = 150
+        self.context_size = 150
         self.dropout_rate = 0.5
         self.epochs = 15
         self.bias = False

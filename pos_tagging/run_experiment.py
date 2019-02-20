@@ -29,7 +29,7 @@ if experiment in available_experiments:
         if experiment == 'bi_lstm_no_transfer':
             result = bi_lstm_no_transfer(domain, labeling_rates)
         elif experiment == 'bi_gru_no_transfer':
-            result = bi_gru_no_transfer(source_domain, labeling_rates)
+            result = bi_gru_no_transfer(domain, labeling_rates)
         elif experiment == 'bi_art_lstm':
             result = bi_art_lstm_transfer(source_domain, target_domain, labeling_rates)
         elif experiment == 'bi_art_gru':

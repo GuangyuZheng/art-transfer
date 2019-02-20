@@ -38,7 +38,7 @@ if __name__ == "__main__":
         for k, v in word_index.items():
             word_set.add(k)
         word2embedding = t.read_word2embedding()
-    char_index, char_cnt = {}, 1
+    char_index, char_cnt = {}, 3
     for char in char_set:
         char_index[char] = char_cnt
         char_cnt += 1

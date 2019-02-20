@@ -18,8 +18,8 @@ if not os.path.isdir(save_prefix):
     os.makedirs(save_prefix)
 root_path = os.path.abspath(os.path.join(os.getcwd(), '..'))
 print(root_path)
-glove_path = os.path.join(root_path, 'glove', 'glove.6B.' + str(w_emb_size) + 'd.txt')
-
+# glove_path = os.path.join(root_path, 'glove', 'glove.6B.' + str(w_emb_size) + 'd.txt')
+glove_path = os.path.join(root_path, 'glove', 'glove.42B.'+str(w_emb_size)+'d.txt')
 BLANK = 0
 
 word2id = {}

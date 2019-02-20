@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#python preprocess_amazon.py
+python preprocess_amazon.py
 
 domains=('books' 'dvd' 'electronics' 'kitchen')
 for src_domain in ${domains[@]};

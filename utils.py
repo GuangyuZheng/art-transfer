@@ -39,7 +39,7 @@ def get_average_precision(file_path):
 def sentiment_analysis_show_acc(model, test_input, testY, batch_size=16):
     writer = open("error.txt", "w", encoding="utf-8")
 
-    testZZ = model.predict(test_input, batch_size=batch_size)
+    testZZ = model.predict(test_input, batch_size=batch_size, verbose=1)
 
     testZ = []
 

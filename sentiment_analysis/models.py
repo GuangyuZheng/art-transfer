@@ -89,7 +89,7 @@ def bidirectional_art_gru_model(settings):
 # bidirectional attentive recurrent transfer learning version two
 def bidirectional_art_lstm_model_v2(settings):
     seq_len = settings.seq_len
-    emb_size = settings.emb_size
+    emb_size = settings.w_emb_size
     vec = settings.vec
 
     input_layer = Input(shape=(seq_len,), dtype='int32')

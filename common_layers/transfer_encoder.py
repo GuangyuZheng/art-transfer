@@ -9,7 +9,8 @@ from custom_rnn.cells import *
 def bidirectional_art_lstm_encoder_v2(left_embed, right_embed, input_mask, settings):
     seq_len = settings.seq_len
     hidden_state_size = settings.hidden_state_size
-    emb_size = settings.emb_size
+    emb_size = K.int_shape(left_embed)[-1]
+    settings.emb_size = emb_size
 
     # forward part
     input_mask_tile = Lambda(lambda x: K.tile(K.expand_dims(x, axis=1), (1, seq_len, 1)))(input_mask)
@@ -36,13 +37,10 @@ def bidirectional_art_lstm_encoder_v2(left_embed, right_embed, input_mask, setti
     backward_left_rnn_h = Lambda(lambda x: x[:, :, :hidden_state_size])(backward_left_rnn_y)
     backward_left_rnn_c = Lambda(lambda x: x[:, :, hidden_state_size:])(backward_left_rnn_y)
 
-    merged_left_rnn_h = concatenate([left_rnn_h, backward_left_rnn_h])
-    merged_left_rnn_c = concatenate([left_rnn_c, backward_left_rnn_c])
+    reversed_left_rnn_h = Lambda(lambda x: K.reverse(x, axes=1))(backward_left_rnn_h)
+    reversed_left_rnn_c = Lambda(lambda x: K.reverse(x, axes=1))(backward_left_rnn_c)
 
-    reversed_merged_left_rnn_h = Lambda(lambda x: K.reverse(x, axes=1))(merged_left_rnn_h)
-    reversed_merged_left_rnn_c = Lambda(lambda x: K.reverse(x, axes=1))(merged_left_rnn_c)
-
-    settings.context_size = K.int_shape(merged_left_rnn_h)[-1]
+    settings.context_size = K.int_shape(reversed_left_rnn_h)[-1]
     context_size = settings.context_size
 
     def flatten_and_repeat(x):
@@ -52,19 +50,19 @@ def bidirectional_art_lstm_encoder_v2(left_embed, right_embed, input_mask, setti
         x = K.reshape(x, (-1, seq_len, seq_len * context_size))
         return x
 
-    merged_left_rnn_h = Lambda(flatten_and_repeat)(merged_left_rnn_h)
-    merged_left_rnn_c = Lambda(flatten_and_repeat)(merged_left_rnn_c)
+    flatten_left_rnn_h = Lambda(flatten_and_repeat)(left_rnn_h)
+    flatten_left_rnn_c = Lambda(flatten_and_repeat)(left_rnn_c)
 
-    reversed_merged_left_rnn_h = Lambda(flatten_and_repeat)(reversed_merged_left_rnn_h)
-    reversed_merged_left_rnn_c = Lambda(flatten_and_repeat)(reversed_merged_left_rnn_c)
+    reversed_flatten_left_rnn_h = Lambda(flatten_and_repeat)(reversed_left_rnn_h)
+    reversed_flatten_left_rnn_c = Lambda(flatten_and_repeat)(reversed_left_rnn_c)
 
     # right(specific domain) part
     # # forward part
     rnn_transfer = RecurrentSequential(return_sequences=True, name="right_rnn")
     rnn_transfer.add(ARTTransferCell(hidden_state_size * 2 + seq_len * 2,
-                                     input_dim=emb_size + context_size * 2 * seq_len + seq_len,
+                                     input_dim=emb_size + context_size * 2 * seq_len + hidden_state_size * 2 + seq_len,
                                      settings=settings))
-    right_rnn_y = rnn_transfer(concatenate([merged_left_rnn_h, merged_left_rnn_c, right_embed, input_mask_tile]))
+    right_rnn_y = rnn_transfer(concatenate([flatten_left_rnn_h, flatten_left_rnn_c, left_rnn_h, left_rnn_c, right_embed, input_mask_tile]))
     right_rnn_y1 = Lambda(lambda x: x[:, :, :hidden_state_size])(right_rnn_y)
     h_attentions = Lambda(lambda x: x[:, :, hidden_state_size * 2: hidden_state_size * 2 + seq_len])(right_rnn_y)
     c_attentions = Lambda(lambda x: x[:, :, hidden_state_size * 2 + seq_len:])(right_rnn_y)
@@ -72,10 +70,10 @@ def bidirectional_art_lstm_encoder_v2(left_embed, right_embed, input_mask, setti
     reversed_rnn_transfer = RecurrentSequential(return_sequences=True, name="reversed_right_rnn")
     reversed_right_embed = Lambda(lambda x: K.reverse(x, axes=1))(right_embed)
     reversed_rnn_transfer.add(ARTTransferCell(hidden_state_size * 2 + seq_len * 2,
-                                              input_dim=emb_size + context_size * 2 * seq_len + seq_len,
+                                              input_dim=emb_size + context_size * 2 * seq_len + hidden_state_size * 2 + seq_len,
                                               settings=settings))
     reversed_right_rnn_y = reversed_rnn_transfer(
-        concatenate([reversed_merged_left_rnn_h, reversed_merged_left_rnn_c, reversed_right_embed,
+        concatenate([reversed_flatten_left_rnn_h, reversed_flatten_left_rnn_c, reversed_left_rnn_h, reversed_left_rnn_c, reversed_right_embed,
                      reversed_input_mask_tile]))
     backward_right_rnn_y = Lambda(lambda x: K.reverse(x, axes=1))(reversed_right_rnn_y)
     backward_right_rnn_y1 = Lambda(lambda x: x[:, :, :hidden_state_size])(backward_right_rnn_y)
@@ -84,8 +82,6 @@ def bidirectional_art_lstm_encoder_v2(left_embed, right_embed, input_mask, setti
     backward_c_attentions = Lambda(lambda x: x[:, :, hidden_state_size * 2 + seq_len:])(backward_right_rnn_y)
 
     merged_right_rnn_y1 = concatenate([right_rnn_y1, backward_right_rnn_y1])
-
-    # merged_right_rnn_y1 = scaled_dot_product_attention_encoder(merged_right_rnn_y1, input_mask, settings)
 
     return merged_right_rnn_y1, h_attentions, c_attentions, backward_h_attentions, backward_c_attentions
 

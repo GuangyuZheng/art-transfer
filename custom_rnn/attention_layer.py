@@ -44,11 +44,12 @@ class ART(Layer):
                                    shape=(self.state_dim, self.state_dim),
                                    initializer='glorot_uniform',
                                    trainable=True)
-        self.U_o = self.add_weight(name='U_o',
-                                   shape=(self.state_dim, self.state_dim),
-                                   initializer=Zeros(),
-                                   regularizer=l2(0),
-                                   trainable=True)
+        if self.bias:
+            self.U_o = self.add_weight(name='U_o',
+                                       shape=(self.state_dim, self.state_dim),
+                                       initializer=Zeros(),
+                                       regularizer=l2(0),
+                                       trainable=True)
         self.C = self.add_weight(name='C',
                                  shape=(self.context_dim, self.state_dim),
                                  initializer='glorot_uniform',
@@ -61,11 +62,12 @@ class ART(Layer):
                                    shape=(self.context_dim, self.state_dim),
                                    initializer='glorot_uniform',
                                    trainable=True)
-        self.C_o = self.add_weight(name='C_o',
-                                   shape=(self.context_dim, self.state_dim),
-                                   initializer=Zeros(),
-                                   regularizer=l2(0),
-                                   trainable=True)
+        if self.bias:
+            self.C_o = self.add_weight(name='C_o',
+                                       shape=(self.context_dim, self.state_dim),
+                                       initializer=Zeros(),
+                                       regularizer=l2(0),
+                                       trainable=True)
         self.v_a = self.add_weight(name='v_a',
                                    shape=(self.state_dim, 1),
                                    initializer='glorot_uniform',
@@ -82,6 +84,7 @@ class ART(Layer):
 
     def call(self, inputs, **kwargs):
         embed, s_prev, aligned_state, context, input_mask = inputs
+        print(K.int_shape(embed), K.int_shape(s_prev), K.int_shape(aligned_state), K.int_shape(context), K.int_shape(input_mask))
         self.s_prev = s_prev
         context = K.reshape(context, shape=(-1, self.seq_len, self.context_dim))
 

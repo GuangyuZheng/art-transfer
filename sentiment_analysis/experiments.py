@@ -31,9 +31,9 @@ def rest_to_one_bi_lstm_no_transfer(domain, layer_num=1, try_times=5):
     train = False
     model = multi_layers_bilstm_no_transfer_model(settings, layer_num=layer_num)
     # model.compile(loss='binary_crossentropy', optimizer='Adagrad', metrics=['accuracy'])
-    model_path = os.path.join(model_directory, 'bi_lstm_rest_to_one_' + domain + '.h5')
-    blank_model_path = os.path.join(model_directory, 'blank', 'bi_lstm_rest_to_one_' + domain + '.h5')
-    tmp_model_path = os.path.join(model_directory, 'tmp', 'bi_lstm_rest_to_one_' + domain + '.h5')
+    model_path = os.path.join(model_directory, 'bi_lstm_rest_to_' + domain + '.h5')
+    blank_model_path = os.path.join(model_directory, 'blank', 'bi_lstm_rest_to_' + domain + '.h5')
+    tmp_model_path = os.path.join(model_directory, 'tmp', 'bi_lstm_rest_to_' + domain + '.h5')
     model.save_weights(blank_model_path, overwrite=True)
 
     trainX = None
@@ -171,7 +171,7 @@ def rnn_source_to_target_bidirectional(source_domain, target_domain, transfer_ty
     valid_input = [validX]
     test_input = [testX]
 
-    batch_size = 64
+    batch_size = 16
     print('transfer type: ' + transfer_type)
     if transfer_type == 'bi_art_lstm':
         model_merged = bidirectional_art_lstm_model(settings)
@@ -224,9 +224,9 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     train = True
 
     model_left = multi_layers_bilstm_no_transfer_model(settings)
-    model_left_path = os.path.join(model_directory, 'bi_lstm_rest_to_one_' + domain + '.h5')
+    model_left_path = os.path.join(model_directory, 'bi_lstm_rest_to_' + domain + '.h5')
     model_merged_path = os.path.join(model_directory,
-                                     transfer_type + '_rest_to_' + domain + '.h5')
+                                     'bi_art_lstm_rest_to_' + domain + '.h5')
     model_left.load_weights(model_left_path)
     freeze_embed = model_left.get_layer('left_embed').get_weights()
     freeze_rnn = model_left.get_layer('left_rnn_1').get_weights()
@@ -261,7 +261,7 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
 
     blank_model_merged_path = os.path.join(model_directory,
                                            'blank',
-                                           transfer_type + '_rest_to_' + domain + '.h5')
+                                           'bi_art_lstm_rest_to_' + domain + '.h5')
     model_merged.save_weights(blank_model_merged_path, overwrite=True)
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000

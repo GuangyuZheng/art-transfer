@@ -177,7 +177,7 @@ class ARTTransferCell(ExtendedRNNCell):
                                  use_bias=True)
         H = Reshape((-1, settings.context_size))(h_l)  # N, seq_len, d
         C = Reshape((-1, settings.context_size))(c_l)  # N, seq_len, d
-        # print(K.int_shape(H))
+
         x = x_r
         h_tml, h_attention = ART(embed_dim=settings.emb_size, state_dim=settings.hidden_state_size,
                                  context_dim=settings.context_size,

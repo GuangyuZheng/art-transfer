@@ -25,7 +25,7 @@ if experiment in available_experiments:
     result = ""
     if experiment == 'bi_lstm_no_transfer':
         result = bi_lstm_no_transfer(domain, experiment, layer_num=1, try_times=try_times)
-    elif experiment == 'bi_art_lstm' or experiment == 'bi_art_lstm_v2':
+    elif experiment == 'bi_art_lstm':
         result = rnn_source_to_target_bidirectional(source_domain, target_domain, experiment, try_times=try_times)
     elif experiment == 'rest_to_one_bi_lstm_no_transfer':
         result = rest_to_one_bi_lstm_no_transfer(domain, try_times=try_times)

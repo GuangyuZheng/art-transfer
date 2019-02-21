@@ -3,7 +3,7 @@ import sys
 import os
 import numpy as np
 sys.path.append('..')
-from sentiment_analysis.models import bidirectional_art_lstm_model_v2
+from sentiment_analysis.models import bidirectional_art_lstm_model
 from sentiment_analysis.settings import Settings
 from utils import sentiment_analysis_show_acc
 
@@ -18,13 +18,13 @@ target_domain = str(args.target_domain).strip()
 settings = Settings()
 vec = np.load(os.path.join(os.getcwd(), 'dataset', 'AMAZON', 'vec.npy'))
 settings.vec = vec
-model = bidirectional_art_lstm_model_v2(settings)[0]
+model = bidirectional_art_lstm_model(settings)[0]
 model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
 
 if source_domain == "others":
     model_path = os.path.join(os.getcwd(), 'model', 'bi_art_lstm_rest_to_'+target_domain+'.h5')
 else:
-    model_path = os.path.join(os.getcwd(), 'model', 'bi_art_lstm_v2_'+source_domain+'_to_'+target_domain+'.h5')
+    model_path = os.path.join(os.getcwd(), 'model', 'bi_art_lstm_'+source_domain+'_to_'+target_domain+'.h5')
 
 model.load_weights(model_path)
 

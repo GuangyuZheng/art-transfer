@@ -174,10 +174,8 @@ def rnn_source_to_target_bidirectional(source_domain, target_domain, transfer_ty
     batch_size = 16
     print('transfer type: ' + transfer_type)
     if transfer_type == 'bi_art_lstm':
-        model_merged = bidirectional_art_lstm_model(settings)
-    elif transfer_type == 'bi_art_lstm_v2':
         model_merged, h_attention_model, c_attention_model, backward_h_attention_model, backward_c_attention_model \
-            = bidirectional_art_lstm_model_v2(settings)
+            = bidirectional_art_lstm_model(settings)
     else:
         print("No transfer type matched!")
         exit(0)
@@ -247,7 +245,8 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     epoch = settings.epochs
     print('transfer type: ' + transfer_type)
     if transfer_type == 'rest_to_one_bi_art_lstm':
-        model_merged = bidirectional_art_lstm_model(settings)
+        model_merged, h_attention_model, c_attention_model, backward_h_attention_model, backward_c_attention_model \
+            = bidirectional_art_lstm_model(settings)
     else:
         print("No transfer type matched!")
         exit(0)

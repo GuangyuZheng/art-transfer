@@ -84,7 +84,6 @@ class ART(Layer):
 
     def call(self, inputs, **kwargs):
         embed, s_prev, aligned_state, context, input_mask = inputs
-        print(K.int_shape(embed), K.int_shape(s_prev), K.int_shape(aligned_state), K.int_shape(context), K.int_shape(input_mask))
         self.s_prev = s_prev
         context = K.reshape(context, shape=(-1, self.seq_len, self.context_dim))
 

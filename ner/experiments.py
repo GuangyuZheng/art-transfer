@@ -163,8 +163,11 @@ def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
     model_merged.get_layer('merged_left_rnn').set_weights(freeze_rnn)
     model_merged.get_layer('reversed_merged_left_rnn').set_weights(freeze_reversed_rnn)
     model_merged.get_layer('left_char_embed').set_weights(freeze_char_embed)
-    model_merged_path = os.path.join(model_directory, 'bi_art_lstm_transfer_' + source_domain + '_to_' + target_domain
+    model_merged_path = os.path.join(model_directory, 'bi_art_lstm_' + source_domain + '_to_' + target_domain
                                      + '_' + str(labeling_rate) + '.h5')
+
+    if target_domain == 'conll':
+        target_settings.batch_size = 32
 
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000
@@ -211,7 +214,7 @@ def bi_art_gru_transfer(source_domain, target_domain, labeling_rate):
     model_merged.get_layer('merged_left_gru').set_weights(freeze_rnn)
     model_merged.get_layer('reversed_merged_left_gru').set_weights(freeze_reversed_rnn)
     model_merged.get_layer('left_char_embed').set_weights(freeze_char_embed)
-    model_merged_path = os.path.join(model_directory, 'bi_art_gru_transfer_' + source_domain + '_to_' + target_domain
+    model_merged_path = os.path.join(model_directory, 'bi_art_gru_' + source_domain + '_to_' + target_domain
                                      + '_' + str(labeling_rate) + '.h5')
 
     if train or (os.path.isfile(model_merged_path) is False):

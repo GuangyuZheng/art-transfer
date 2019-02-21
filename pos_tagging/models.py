@@ -86,7 +86,7 @@ def bi_art_lstm_model(settings):
     left_embed = concatenate([sen_embed, sen_cembed])
     right_embed = left_embed
 
-    _, merged_right_rnn_y1 = bidirectional_art_lstm_encoder(left_embed, right_embed, sen_mask, settings)
+    merged_right_rnn_y1, h_att, c_att, back_h_att, back_c_att = bidirectional_art_lstm_encoder(left_embed, right_embed, sen_mask, settings)
     merged_right_rnn_y1 = Dropout(0.5)(merged_right_rnn_y1)
     crf = CRF(class_num, name='crf')
     crf_result = crf(merged_right_rnn_y1, mask=sen_mask)

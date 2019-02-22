@@ -28,7 +28,7 @@ class PTBSettings(Settings):
         Settings.__init__(self)
         self.seq_len = 251
         self.max_char_len = 17
-        self.epochs = 40
+        self.epochs = 80
         self.batch_size = 256
         self.label_index = ['PRP$', 'VBG', 'VBD', '``', 'VBN', 'POS', "''", 'VBP', 'WDT', 'JJ',
                             'WP', 'VBZ', 'DT', '#', 'RP', '$', 'NN', 'FW', ',', '.', 'TO', 'PRP', 'RB', '-LRB-',

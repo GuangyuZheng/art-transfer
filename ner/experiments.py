@@ -6,7 +6,7 @@ from ner.settings import *
 from utils import *
 import numpy as np
 import os
-import sample
+import ner.sample as sample
 
 source_setitngs = None
 target_settings = None
@@ -169,6 +169,7 @@ def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
     if target_domain == 'conll':
         target_settings.batch_size = 32
 
+    model_merged.load_weights(model_merged_path)
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000
         maxF1 = 0

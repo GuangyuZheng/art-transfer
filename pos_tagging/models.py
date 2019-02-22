@@ -77,6 +77,7 @@ def bi_art_lstm_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, input_length=seq_len, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
+    sen_embed = Dropout(0.2, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:
@@ -87,7 +88,7 @@ def bi_art_lstm_model(settings):
     right_embed = left_embed
 
     merged_right_rnn_y1, h_att, c_att, back_h_att, back_c_att = bidirectional_art_lstm_encoder(left_embed, right_embed, sen_mask, settings)
-    merged_right_rnn_y1 = Dropout(0.5)(merged_right_rnn_y1)
+    merged_right_rnn_y1 = Dropout(0.2)(merged_right_rnn_y1)
     crf = CRF(class_num, name='crf')
     crf_result = crf(merged_right_rnn_y1, mask=sen_mask)
 

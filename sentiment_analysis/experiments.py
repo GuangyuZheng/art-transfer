@@ -61,6 +61,8 @@ def rest_to_one_bi_lstm_no_transfer(domain, layer_num=1, try_times=5):
     testX = np.load(os.path.join(data_prefix, domain + '_testX.npy'))
     testY = np.load(os.path.join(data_prefix, domain + '_testY.npy'))
 
+    settings.epochs = 15
+
     if train or (os.path.isfile(model_path) is False):
         maxAcc = 0
         for i in range(try_times):
@@ -112,6 +114,7 @@ def bi_lstm_no_transfer(domain, experiment, layer_num=1, try_times=5):
     testY = np.load(os.path.join(data_prefix, domain + '_testY.npy'))
 
     test_input = [testX]
+    settings.epochs = 15
 
     if train or (os.path.isfile(model_path) is False):
         maxAcc = 0
@@ -242,7 +245,6 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     test_input = [testX]
 
     batch_size = 64
-    epoch = settings.epochs
     print('transfer type: ' + transfer_type)
     if transfer_type == 'rest_to_one_bi_art_lstm':
         model_merged, h_attention_model, c_attention_model, backward_h_attention_model, backward_c_attention_model \
@@ -269,7 +271,7 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
             print("time " + str(i))
             model_merged.load_weights(blank_model_merged_path)
             model_merged.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
-            for k in range(0, epoch):
+            for k in range(0, settings.epochs):
                 r = model_merged.fit(train_input, trainY, verbose=1, epochs=1, batch_size=batch_size)
                 print("merged evaluation, round:", k, "rest", "to ", domain)
                 temPWA = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)

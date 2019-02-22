@@ -7,7 +7,7 @@ from ner.models import bi_art_lstm_model
 from ner.settings import *
 from ner.experiments import convert_to_one_hot
 from utils import load_pickle
-import sample
+import ner.sample as sample
 
 parser = argparse.ArgumentParser(description='manual to this script')
 parser.add_argument('--source_domain', '-s', type=type(""))

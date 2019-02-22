@@ -7,7 +7,7 @@ from pos_tagging.models import bi_art_lstm_model
 from pos_tagging.settings import *
 from pos_tagging.experiments import convert_to_one_hot
 from utils import load_pickle
-import sample
+import pos_tagging.sample as sample
 
 parser = argparse.ArgumentParser(description='manual to this script')
 parser.add_argument('--source_domain', '-s', type=type(""))

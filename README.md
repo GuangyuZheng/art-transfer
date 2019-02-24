@@ -6,6 +6,7 @@
 - Keras (>=2.2.4)
 - TensorFlow (>=1.10.0)
 - [Recurrentshop (==1.0.0)](/https://github.com/farizrahman4u/recurrentshop)
+- [keras-contrib](https://github.com/keras-team/keras-contrib)
 
 # Get Required Data
 ```

@@ -3,7 +3,7 @@ import numpy as np
 
 def create_sample_index(rate, len):
     np.random.seed(13)
-    return np.random.choice(len, int(rate * len))
+    return np.random.choice(len, int(rate * len), replace=False)
 
 
 def sample_arrays(arrays, index):

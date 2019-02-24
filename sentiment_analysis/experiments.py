@@ -193,22 +193,26 @@ def rnn_source_to_target_bidirectional(source_domain, target_domain, transfer_ty
     blank_model_merged_path = os.path.join(model_directory,
                                            'blank',
                                            transfer_type + '_' + source_domain + '_to_' + target_domain + '.h5')
+    tmp_model_merged_path = os.path.join(model_directory, 'tmp', transfer_type + '_' + source_domain + '_to_' + target_domain + '.h5')
     model_merged.save_weights(blank_model_merged_path, overwrite=True)
     if train or (os.path.isfile(model_merged_path) is False):
-        minLoss = 10000
         maxAcc = 0
         for i in range(try_times):
             print("time " + str(i))
+            minLoss = 10000
             model_merged.load_weights(blank_model_merged_path)
             model_merged.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
             for k in range(0, settings.epochs):
-                r = model_merged.fit(train_input, trainY, verbose=1, epochs=1, batch_size=batch_size)
-                print("merged evaluation, round:", k, "  ", source_domain, "to ", target_domain)
-                temPWA = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
-                if temPWA > maxAcc:
-                    model_merged.save_weights(model_merged_path, overwrite=True)
-                    maxAcc = temPWA
-                print("maxAcc: " + str(maxAcc))
+                r = model_merged.fit(train_input, trainY, verbose=1, epochs=1, batch_size=batch_size, validation_data=(validX, validY))
+                if r.history['val_loss'][0] < minLoss:
+                    model_merged.save_weights(tmp_model_merged_path, overwrite=True)
+                    minLoss = r.history['val_loss'][0]
+            model_merged.load_weights(tmp_model_merged_path)
+            temPWA = sentiment_analysis_show_acc(model_merged, test_input, testY)
+            if temPWA > maxAcc:
+                model_merged.save_weights(model_merged_path, overwrite=True)
+                maxAcc = temPWA
+                print("update model")
     model_merged.load_weights(model_merged_path)
     PWA_merged = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
     result = transfer_type + ': ' + source_domain + ' to ' + target_domain + ' ' + str(PWA_merged)
@@ -244,7 +248,7 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     valid_input = [validX]
     test_input = [testX]
 
-    batch_size = 64
+    batch_size = 16
     print('transfer type: ' + transfer_type)
     if transfer_type == 'rest_to_one_bi_art_lstm':
         model_merged, h_attention_model, c_attention_model, backward_h_attention_model, backward_c_attention_model \
@@ -263,22 +267,28 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
     blank_model_merged_path = os.path.join(model_directory,
                                            'blank',
                                            'bi_art_lstm_rest_to_' + domain + '.h5')
+    tmp_model_merged_path = os.path.join(model_directory, 'tmp',
+                                         'bi_art_lstm_rest_to_' + domain + '.h5')
     model_merged.save_weights(blank_model_merged_path, overwrite=True)
     if train or (os.path.isfile(model_merged_path) is False):
-        minLoss = 10000
         maxAcc = 0
         for i in range(try_times):
             print("time " + str(i))
+            minLoss = 10000
             model_merged.load_weights(blank_model_merged_path)
             model_merged.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
             for k in range(0, settings.epochs):
-                r = model_merged.fit(train_input, trainY, verbose=1, epochs=1, batch_size=batch_size)
-                print("merged evaluation, round:", k, "rest", "to ", domain)
-                temPWA = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
-                if temPWA > maxAcc:
-                    model_merged.save_weights(model_merged_path, overwrite=True)
-                    maxAcc = temPWA
-                print("maxAcc: " + str(maxAcc))
+                r = model_merged.fit(train_input, trainY, verbose=1, epochs=1, batch_size=batch_size,
+                                     validation_data=(validX, validY))
+                if r.history['val_loss'][0] < minLoss:
+                    model_merged.save_weights(tmp_model_merged_path, overwrite=True)
+                    minLoss = r.history['val_loss'][0]
+            model_merged.load_weights(tmp_model_merged_path)
+            temPWA = sentiment_analysis_show_acc(model_merged, test_input, testY)
+            if temPWA > maxAcc:
+                model_merged.save_weights(model_merged_path, overwrite=True)
+                maxAcc = temPWA
+                print("update model")
     model_merged.load_weights(model_merged_path)
     PWA_merged = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
     result = transfer_type + ': ' + ' rest to ' + domain + ' ' + str(PWA_merged)

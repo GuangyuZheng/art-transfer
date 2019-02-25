@@ -2,11 +2,11 @@ class Settings(object):
     def __init__(self):
         self.emb_size = 50
         self.ch_emb_size = 50
-        self.hidden_state_size = 300
-        self.context_size = 300
+        self.hidden_state_size = 100
+        self.context_size = 100
         self.epochs = 10
         self.batch_size = 128
-        self.char_encoding = 'rnn'
+        self.char_encoding = 'cnn'
         self.bias = True
         self.use_char_embed = True
 

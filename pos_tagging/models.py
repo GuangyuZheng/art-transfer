@@ -19,6 +19,7 @@ def bi_lstm_no_transfer_model(settings):
     sen_cinput = Input(shape=(seq_len, word_len), dtype='int32')
     sen_embed = Embedding(input_dim=len(vec), output_dim=emb_size, weights=[vec],
                           name='left_embed', mask_zero=True, trainable=True)(sen_input)
+    sen_embed = Dropout(0.2, (None, 1, None))(sen_embed)
     if settings.char_encoding == 'cnn':
         cm = cnn_char_model(settings)
     else:
@@ -27,7 +28,7 @@ def bi_lstm_no_transfer_model(settings):
     sen_cembed = TimeDistributed(cm, name='left_char_embed')(sen_cinput)
     embed = concatenate([sen_embed, sen_cembed])
     rnn_y1 = multi_layers_bidirectional_lstm_no_transfer_encoder(embed, settings, layer_num=1)
-    rnn_y1 = Dropout(0.5)(rnn_y1)
+    rnn_y1 = Dropout(0.2)(rnn_y1)
     crf = CRF(class_num, name='crf')
     crf_result = crf(rnn_y1, mask=sen_mask)
 

@@ -9,10 +9,10 @@ def cnn_char_model(settings):
     char_cnt = settings.char_cnt
 
     char_input = Input(shape=(None,), dtype='int32')
-    cembed_layer = Embedding(char_cnt + 1, char_embd_dim)
+    cembed_layer = Embedding(input_dim=char_cnt + 1, output_dim=char_embd_dim)
 
     c_emb = cembed_layer(char_input)
-    c_emb = Dropout(0.2)(cembed_layer(char_input))
+    c_emb = Dropout(0.2, (None, 1, None))(c_emb)
     c_mask = Lambda(lambda x: K.cast(K.not_equal(x, 0), 'float32'))(char_input)
     cc = Conv1D(char_embd_dim, 3, padding='same')(c_emb)
     cc = LeakyReLU()(cc)

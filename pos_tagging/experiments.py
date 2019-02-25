@@ -166,7 +166,6 @@ def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
     model_merged_path = os.path.join(model_directory, 'bi_art_lstm_' + source_domain + '_to_' + target_domain
                                      + '_' + str(labeling_rate) + '.h5')
 
-    model_merged.load_weights(model_merged_path)
     if train or (os.path.isfile(model_merged_path) is False):
         minLoss = 10000
         maxAcc = 0

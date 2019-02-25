@@ -16,6 +16,7 @@ def bidirectional_art_lstm_encoder(left_embed, right_embed, input_mask, settings
     input_mask_tile = Lambda(lambda x: K.tile(K.expand_dims(x, axis=1), (1, seq_len, 1)))(input_mask)
 
     # backward part
+    reversed_left_embed = Lambda(lambda x: K.reverse(x, axes=1))(left_embed)
     reversed_input_mask = Lambda(lambda x: K.reverse(x, axes=1))(input_mask)
     reversed_input_mask_tile = Lambda(lambda x: K.tile(K.expand_dims(x, axis=1), (1, seq_len, 1)))(reversed_input_mask)
 
@@ -31,7 +32,6 @@ def bidirectional_art_lstm_encoder(left_embed, right_embed, input_mask, settings
                                                   trainable=True)
     reversed_rnn_left_layer.add(
         NormalLSTMCell(hidden_state_size * 2, input_dim=emb_size, settings=settings))
-    reversed_left_embed = Lambda(lambda x: K.reverse(x, axes=1))(left_embed)
     reversed_left_rnn_y = reversed_rnn_left_layer(reversed_left_embed)
     backward_left_rnn_y = Lambda(lambda x: K.reverse(x, axes=1))(reversed_left_rnn_y)
     backward_left_rnn_h = Lambda(lambda x: x[:, :, :hidden_state_size])(backward_left_rnn_y)

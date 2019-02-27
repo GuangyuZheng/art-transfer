@@ -14,7 +14,24 @@
 ```
 - Data and processing codes for POS tagging and NER are from [https://github.com/kimiyoung/transfer]
 
-# Get started
+# Test
+## Sentiment Analysis Task
+```
+cd sentiment_analysis
+python test_art_model.py -s [source_domain] -t [target_domain]
+```
+## POS Tagging Task
+```
+cd pos_tagging
+python test_art_model.py -s [source_domain] -t [target_domain] -r [rates]
+```
+## Named Entity Recognition Task
+```
+cd ner
+python test_art_model.py -s [source_domain] -t [target_domain] -r [rates]
+```
+
+# Train
 
 ## Sentiment Analysis Task
 ```

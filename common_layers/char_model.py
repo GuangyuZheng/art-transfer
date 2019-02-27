@@ -9,7 +9,7 @@ def cnn_char_model(settings):
     char_cnt = settings.char_cnt
 
     char_input = Input(shape=(None,), dtype='int32')
-    cembed_layer = Embedding(input_dim=char_cnt + 1, output_dim=char_embd_dim)
+    cembed_layer = Embedding(input_dim=char_cnt, output_dim=char_embd_dim)
 
     c_emb = cembed_layer(char_input)
     c_emb = Dropout(0.2, (None, 1, None))(c_emb)
@@ -27,7 +27,7 @@ def gru_char_model(settings):
     char_cnt = settings.char_cnt
 
     char_input = Input(shape=(None,), dtype='int32')
-    cembed_layer = Embedding(input_dim=char_cnt + 1, output_dim=char_embd_dim, mask_zero=True)
+    cembed_layer = Embedding(input_dim=char_cnt, output_dim=char_embd_dim, mask_zero=True)
 
     c_emb = cembed_layer(char_input)
     cc = Bidirectional(GRU(units=50))(c_emb)
@@ -41,7 +41,7 @@ def lstm_char_model(settings):
     char_cnt = settings.char_cnt
 
     char_input = Input(shape=(None,), dtype='int32')
-    cembed_layer = Embedding(input_dim=char_cnt + 1, output_dim=char_embd_dim, mask_zero=True)
+    cembed_layer = Embedding(input_dim=char_cnt, output_dim=char_embd_dim, mask_zero=True)
 
     c_emb = cembed_layer(char_input)
     cc = Bidirectional(LSTM(units=50))(c_emb)

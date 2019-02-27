@@ -2,8 +2,8 @@ class Settings(object):
     def __init__(self):
         self.emb_size = 50
         self.ch_emb_size = 50
-        self.hidden_state_size = 100
-        self.context_size = 100
+        self.hidden_state_size = 150
+        self.context_size = 150
         self.epochs = 10
         self.batch_size = 128
         self.char_encoding = 'cnn'
@@ -16,7 +16,7 @@ class TwitterSettings(Settings):
         Settings.__init__(self)
         self.seq_len = 40
         self.max_char_len = 30
-        self.epochs = 100
+        self.epochs = 200
         self.label_index = ['PRP$', 'VBG', 'VBD', 'VBN', 'HT', 'POS', "''", 'VBP', 'WDT', 'USR', 'JJ',
                             'WP', 'VBZ', 'DT', 'RT', 'NONE', 'RP', 'VPP', 'NN', 'TO', ')', '(', 'FW', ',', '.', 'CC',
                             'PRP', 'RB', 'TD', ':', 'NNS', 'NNP', 'VB', 'WRB', 'URL', 'LS', 'PDT', 'RBS', 'RBR', 'O',

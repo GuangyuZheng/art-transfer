@@ -13,6 +13,5 @@ class Settings(object):
                         'kitchen', ]
         self.available_experiments = ['bi_lstm_no_transfer',
                                       'bi_art_lstm',
-                                      'bi_art_lstm_v2',
                                       'rest_to_one_bi_lstm_no_transfer',
                                       'rest_to_one_bi_art_lstm', ]

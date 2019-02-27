@@ -18,9 +18,7 @@ target_domain = str(args.target_domain).strip()
 labeling_rates = args.rates
 
 available_experiments = ['bi_lstm_no_transfer',
-                         'bi_gru_no_transfer',
-                         'bi_art_lstm',
-                         'bi_art_gru', ]
+                         'bi_art_lstm', ]
 
 if experiment in available_experiments:
     fileName = experiment + '_result.txt'
@@ -28,12 +26,8 @@ if experiment in available_experiments:
         result = ""
         if experiment == 'bi_lstm_no_transfer':
             result = bi_lstm_no_transfer(domain, labeling_rates)
-        elif experiment == 'bi_gru_no_transfer':
-            result = bi_gru_no_transfer(domain, labeling_rates)
         elif experiment == 'bi_art_lstm':
             result = bi_art_lstm_transfer(source_domain, target_domain, labeling_rates)
-        elif experiment == 'bi_art_gru':
-            result = bi_art_gru_transfer(source_domain, target_domain, labeling_rates)
         f.write(result+'\n')
         print(result)
 else:

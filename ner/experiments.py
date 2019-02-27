@@ -108,37 +108,6 @@ def bi_lstm_no_transfer(domain, labeling_rate):
     return result
 
 
-def bi_gru_no_transfer(domain, labeling_rate):
-    x, wx, y, y_one_hot, m, tx, twx, ty, ty_one_hot, tm = init_data(domain, labeling_rate, form='target')
-    print("bi rnn no transfer: " + domain)
-    model_directory = os.path.join(os.getcwd(), 'model')
-    if not os.path.exists(model_directory):
-        os.makedirs(model_directory)
-    train = True
-    model = bi_gru_no_transfer_model(target_settings)
-    model.summary()
-    model_path = os.path.join(model_directory, 'bi_gru_no_transfer_' + domain + '_' + str(labeling_rate) + '.h5')
-    if train or (os.path.isfile(model_path) is False):
-        minLoss = 10000
-        maxF1 = 0
-        for k in range(0, target_settings.epochs):
-            r = model.fit([wx, x], y_one_hot, verbose=1, epochs=1, batch_size=target_settings.batch_size)
-            if k >= 0 and (k+1) % 1 == 0:
-                print("evaluation, round:", k, "  ", domain)
-                py = model.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
-                acc, f1 = target_task.evaluate(py, ty, tm)
-                print('acc:', acc, 'f1:', f1)
-                if f1 > maxF1:
-                    model.save_weights(model_path, overwrite=True)
-                    maxF1 = f1
-    model.load_weights(model_path)
-
-    py = model.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
-    acc, f1 = target_task.evaluate(py, ty, tm)
-    result = 'bi-lstm no transfer labeling rates ' + str(labeling_rate) + ': ' + domain + ' ' + str(f1)
-    return result
-
-
 def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
     init_data(source_domain, 1, form='source')
     x, wx, y, y_one_hot, m, tx, twx, ty, ty_one_hot, tm = init_data(target_domain, labeling_rate, form='target')
@@ -189,50 +158,3 @@ def bi_art_lstm_transfer(source_domain, target_domain, labeling_rate):
              + ': ' + str(maxF1)
     return result
 
-
-def bi_art_gru_transfer(source_domain, target_domain, labeling_rate):
-    init_data(source_domain, 1, form='source')
-    x, wx, y, y_one_hot, m, tx, twx, ty, ty_one_hot, tm = init_data(target_domain, labeling_rate, form='target')
-    print("bi art gru transfer: " + source_domain + ' to ' + target_domain + ' labeling rate: ' + str(labeling_rate))
-    model_directory = os.path.join(os.getcwd(), 'model')
-    if not os.path.exists(model_directory):
-        os.makedirs(model_directory)
-    train = True
-
-    model_left = bi_gru_no_transfer_model(source_setitngs)
-    model_left.summary()
-    model_left_path = os.path.join(model_directory, 'bi_gru_no_transfer_' + source_domain + '_1.0.h5')
-    model_left.load_weights(model_left_path)
-    freeze_embed = model_left.get_layer('left_embed').get_weights()
-    freeze_rnn = model_left.get_layer('left_gru_1').get_weights()
-    freeze_reversed_rnn = model_left.get_layer('reversed_left_gru_1').get_weights()
-    freeze_char_embed = model_left.get_layer('left_char_embed').get_weights()
-
-    model_merged = bi_art_gru_model(target_settings)
-    model_merged.summary()
-    model_merged.get_layer('left_embed').set_weights(freeze_embed)
-    model_merged.get_layer('merged_left_gru').set_weights(freeze_rnn)
-    model_merged.get_layer('reversed_merged_left_gru').set_weights(freeze_reversed_rnn)
-    model_merged.get_layer('left_char_embed').set_weights(freeze_char_embed)
-    model_merged_path = os.path.join(model_directory, 'bi_art_gru_' + source_domain + '_to_' + target_domain
-                                     + '_' + str(labeling_rate) + '.h5')
-
-    if train or (os.path.isfile(model_merged_path) is False):
-        minLoss = 10000
-        maxF1 = 0
-        for k in range(0, target_settings.epochs):
-            r = model_merged.fit([wx, x], y_one_hot, verbose=1, epochs=1, batch_size=target_settings.batch_size)
-            print("evaluation, round:", k, "  ", source_domain, 'to', target_domain)
-            py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
-            acc, f1 = target_task.evaluate(py, ty, tm)
-            if f1 > maxF1:
-                model_merged.save_weights(model_merged_path, overwrite=True)
-                maxF1 = f1
-            print('acc:', acc, 'f1', f1, 'maxF1:', maxF1)
-    else:
-        model_merged.load_weights(model_merged_path)
-        py = model_merged.predict([twx, tx], batch_size=target_settings.batch_size, verbose=1)
-        acc, maxF1 = target_task.evaluate(py, ty, tm)
-    result = "bi art gru transfer: " + source_domain + ' to ' + target_domain + ' labeling rate: ' + str(labeling_rate) \
-             + ': ' + str(maxF1)
-    return result

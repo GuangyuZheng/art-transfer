@@ -2,7 +2,6 @@ import sys
 sys.path.append("..")
 from custom_rnn.lstm_cell import *
 from recurrentshop import RecurrentSequential
-from custom_rnn.cells import *
 
 
 # bidirectional attentive recurrent transfer learning
@@ -85,46 +84,3 @@ def bidirectional_art_lstm_encoder(left_embed, right_embed, input_mask, settings
 
     return merged_right_rnn_y1, h_attentions, c_attentions, backward_h_attentions, backward_c_attentions
 
-
-# bidirectional attentive recurrent transfer learning gru version
-def bidirectional_art_gru_encoder(left_embed, right_embed, input_mask, settings):
-    seq_len = settings.seq_len
-    hidden_state_size = settings.hidden_state_size
-    emb_size = K.int_shape(left_embed)[-1]
-    settings.emb_size = emb_size
-
-    # backward part
-    reversed_left_embed = Lambda(lambda x: K.reverse(x, axes=1))(left_embed)
-
-    # left(open domain) part
-    # # forward part
-    rnn_left_layer = GRU(units=hidden_state_size, return_sequences=True, name="merged_left_gru")
-    left_rnn_y = rnn_left_layer(left_embed)
-    left_rnn_h = left_rnn_y
-    # # backward part
-    reversed_input_mask = Lambda(lambda x: K.reverse(x, axes=1))(input_mask)
-    reversed_rnn_left_layer = GRU(units=hidden_state_size, return_sequences=True, name="reversed_merged_left_gru")
-    reversed_left_rnn_y = reversed_rnn_left_layer(reversed_left_embed)
-    reversed_left_rnn_h = reversed_left_rnn_y
-
-    backward_left_rnn_h = Lambda(lambda x: K.reverse(x, axes=1))(reversed_left_rnn_h)
-
-    merged_left_rnn_y1 = concatenate([left_rnn_h, backward_left_rnn_h])
-
-    # right(specific domain) part
-    # # forward
-    art_cell = ARTGRUCell(units=hidden_state_size, h_context=left_rnn_h, context_mask=input_mask,
-                          settings=settings)
-    aligned_hs = left_rnn_h
-    right_rnn_y1 = RNN(art_cell, return_sequences=True)(concatenate([right_embed, aligned_hs]))
-    # # backward
-    re_art_cell = ARTGRUCell(units=hidden_state_size, h_context=reversed_left_rnn_h,
-                             context_mask=reversed_input_mask, settings=settings)
-    reversed_right_embed = Lambda(lambda x: K.reverse(x, axes=1))(right_embed)
-    reversed_aligned_hs = reversed_left_rnn_h
-    reversed_right_rnn_y1 = RNN(re_art_cell, return_sequences=True) \
-        (concatenate([reversed_right_embed, reversed_aligned_hs]))
-    backward_right_rnn_y1 = Lambda(lambda x: K.reverse(x, axes=1))(reversed_right_rnn_y1)
-    merged_right_rnn_y1 = concatenate([right_rnn_y1, backward_right_rnn_y1])
-
-    return merged_left_rnn_y1, merged_right_rnn_y1

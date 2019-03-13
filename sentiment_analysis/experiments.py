@@ -212,7 +212,7 @@ def rnn_source_to_target_bidirectional(source_domain, target_domain, transfer_ty
             if temPWA > maxAcc:
                 model_merged.save_weights(model_merged_path, overwrite=True)
                 maxAcc = temPWA
-                print("update model")
+                print("update model", maxAcc)
     model_merged.load_weights(model_merged_path)
     PWA_merged = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
     result = transfer_type + ': ' + source_domain + ' to ' + target_domain + ' ' + str(PWA_merged)
@@ -288,7 +288,7 @@ def rnn_rest_to_one_transfer_bidirectional(domain, transfer_type, try_times):
             if temPWA > maxAcc:
                 model_merged.save_weights(model_merged_path, overwrite=True)
                 maxAcc = temPWA
-                print("update model")
+                print("update model", maxAcc)
     model_merged.load_weights(model_merged_path)
     PWA_merged = sentiment_analysis_show_acc(model_merged, test_input, testY, batch_size=batch_size)
     result = transfer_type + ': ' + ' rest to ' + domain + ' ' + str(PWA_merged)
